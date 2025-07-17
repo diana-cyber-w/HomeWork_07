@@ -1,5 +1,6 @@
 package otus.homework.customview.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
@@ -9,6 +10,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.LinearInterpolator
 import otus.homework.customview.data.Item
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -40,11 +42,21 @@ class CategoryChartView @JvmOverloads constructor(
         isAntiAlias = true
         pathEffect = DashPathEffect(floatArrayOf(10f, 10f), 0f)
     }
-
     private val textPaint = Paint().apply {
         color = Color.BLACK
         textSize = 30f
         textAlign = Paint.Align.CENTER
+    }
+    private val valueAnimator = ValueAnimator.ofInt(0, 255).apply {
+        duration = 1500L
+        interpolator = LinearInterpolator()
+        addUpdateListener {
+            textPaint.alpha = it.animatedValue as Int
+            axisPaint.alpha = it.animatedValue as Int
+            paintPoint.alpha = it.animatedValue as Int
+            paintLine.alpha = it.animatedValue as Int
+            invalidate()
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -100,7 +112,7 @@ class CategoryChartView @JvmOverloads constructor(
             points.add(ChartItem(time, amount))
         }
         calcPositions()
-        postInvalidate()
+        valueAnimator.start()
     }
 
     private fun calcPositions() {
