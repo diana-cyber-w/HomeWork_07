@@ -1,6 +1,9 @@
 package otus.homework.customview
 
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
@@ -18,6 +21,7 @@ class MainActivity : AppCompatActivity(), OnCategoryClickListener {
     private lateinit var pieChartView: PieChartView
     private lateinit var categoryChartView: CategoryChartView
     private var clickedCategory = MutableStateFlow<String?>(null)
+    private lateinit var button: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity(), OnCategoryClickListener {
         pieChartView.setOnCategoryClickListener(this)
 
         categoryChartView = findViewById(R.id.categoryChartView)
+        button = findViewById(R.id.button)
 
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.CREATED) {
@@ -39,6 +44,13 @@ class MainActivity : AppCompatActivity(), OnCategoryClickListener {
                     }
                 }
             }
+        }
+
+        button.setOnClickListener {
+            val intent = Intent(this, MotionActivity::class.java)
+            val options =
+                ActivityOptions.makeSceneTransitionAnimation(this, button, "shared_button")
+            startActivity(intent, options.toBundle())
         }
     }
 
